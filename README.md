@@ -19,7 +19,7 @@ To deploy this package to Jelastic Private Cloud, import [this JPS manifest](../
 
 For more information on what Jelastic add-on is and how to apply it, follow the [Jelastic Add-ons](https://github.com/jelastic-jps/jpswiki/wiki/Jelastic-Addons) reference.
 
-###Installation Process
+### Installation Process
 
 ![Install](../../raw/master/images/strongswan_install_options.png)
 
@@ -38,7 +38,7 @@ Ciphers
 
 * esp : aes128-sha256 (default) (ediatable)
 
-###Actions
+### Actions
 
 ![Options](../../raw/master/images/strongswan_options.png)
 Once installed you can:
