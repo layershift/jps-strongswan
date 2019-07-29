@@ -1,0 +1,5 @@
+# Bash only checks the first word of a command for an alias, any words after that are not checked.
+alias sudo='sudo '
+# execute commands with --strict.perms=false since /etc/metricbeat/metricbeat.yml is writable to jelastic user
+alias strongswan='sudo /usr/sbin/strongswan'
+alias ipsec='sudo /usr/sbin/strongswan'

@@ -1,0 +1,3 @@
+Cmnd_Alias STRONGSWAN = /usr/bin/systemctl restart strongswan*, /usr/bin/systemctl stop strongswan*, /usr/bin/systemctl start strongswan*, /usr/bin/systemctl status strongswan*, /usr/sbin/strongswan *, /usr/sbin/service metricbeat *
+
+%ssh-access ALL = NOPASSWD: STRONGSWAN

@@ -1,0 +1,34 @@
+# ipsec.conf - strongSwan IPsec configuration file
+
+# basic configuration
+
+config setup
+        # strictcrlpolicy=yes
+        # uniqueids = no
+conn %default
+        ikelifetime=1440m
+        keylife=240m
+        rekeymargin=10m
+        keyingtries=3
+        keyexchange=ikev1
+        authby=secret
+        dpdaction=restart
+        closeaction=restart
+        reauth=yes
+        rekey=yes
+
+conn myVPN  
+        left=$left                  #strongswan external address
+        leftsubnet=$leftSubnet      #network behind strongswan
+        leftid=$left                #IKEID sent by strongswan
+        leftfirewall=yes
+        right=$right                #PEER external address      
+        rightsubnet=$rightSubnet    #network behind PEER   
+        rightid=$right
+        auto=start
+        ike=aes128-sha1-modp1536           #P1: modp1536 = DH group 5
+        esp=aes128-sha1                   #P2
+        #deprecated functions ike=aes128-md5-modp1536 does the same thing as pfsgroup = modp1536
+        #pfs = yes
+        #pfsgroup = modp1536
+
