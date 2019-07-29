@@ -141,6 +141,7 @@ onBeforeInit: |
         "caption": "ike",
         "required": true,
         "hideLabel": false,
+        "editable": true,
         "values": {
           "aes128-sha256-modp3072": "aes128-sha256-modp3072",
           "aes128-sha1-modp2048": "aes128-sha1-modp2048 (before 5.4.0)",
@@ -153,6 +154,7 @@ onBeforeInit: |
         "caption": "esp",
         "required": true,
         "hideLabel": false,
+        "editable": true,
         "values": {
           "aes128-sha256": "aes128-sha256",
           "aes128-sha1": "aes128-sha1 (For Cisco endpoint)"
