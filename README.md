@@ -39,7 +39,9 @@ Ciphers
 * esp : aes128-sha256 (default) (ediatable)
 
 ###Actions
-![Options](../../raw/master/images/strongswan_options.png)Once installed you can:
+
+![Options](../../raw/master/images/strongswan_options.png)
+Once installed you can:
 
 * Change the configuration parameters using Configure button
 * Check tunnel status using Status button
