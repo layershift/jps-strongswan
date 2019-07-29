@@ -4,11 +4,7 @@ type: update
 name: 'strongwan'
 homepage: https://github.com/layershift/jps-strongswan
 baseUrl: https://raw.githubusercontent.com/layershift/jps-strongswan/master/
-<<<<<<< HEAD
 logo: /images/strongswan_square_large_white.png?_r=${fn.random}
-=======
-logo: /images/strongswan_square_large_white.png.png?_r=${fn.random}
->>>>>>> 6826b2f0ad07c9167d255a7aaa1cac37e8778cf6
 
 categories:
  - apps/others
