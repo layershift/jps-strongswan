@@ -4,7 +4,7 @@ In order to complete the setup you need the following information:
 ```
 Peer public IP (right)       : The public IP of the VPN peer.
                                1.1.1.1
-Peer sunbnet (rightsubnet)   : Subnet or IP address that will be reachable via the VPN. 
+Peer subnet (rightsubnet)   : Subnet or IP address that will be reachable via the VPN. 
                                192.168.10.3/32
                                Multiple subnets can be set
                                192.168.10.0/24,192.168.20.3/32      
