@@ -1,0 +1,253 @@
+_info : 'https://docs.cloudscripting.com/1.6.2/'
+version: '1.6.2'
+type: update
+name: 'strongwan'
+homepage: https://github.com/layershift/jps-strongswan
+baseUrl: https://raw.githubusercontent.com/layershift/jps-strongswan/master/
+logo: /images/strongswan_square_large.png?_r=${fn.random}
+
+categories:
+ - apps/others
+
+description:
+  text: /texts/description.md
+  short: the OpenSource IPsec-based VPN Solution
+
+targetNodes:
+  nodeGroup:
+  - cp
+
+nodeGroupAlias:
+  ${targetNodes.nodeGroup}: mygroup
+
+requiredFeatures: extip
+
+settings:
+  main:
+    fields:
+    - type: string
+      name: right
+      caption: Peer public IP (right)
+      hideLabel: false
+      required: true
+      default: 127.0.0.1
+    - type: string
+      name: rightSubnet
+      caption: Peer sunbnet (rightsubnet)
+      hideLabel: false
+      required: true
+      default: 127.0.0.1/32
+    - type: string
+      name: psk
+      caption: PSK
+      required: true
+      hideLabel: false
+    - type: list
+      name: keyexchange
+      caption: keyexchange
+      values:
+        ikev1: ikev1
+        ikev2: ikev2
+      hideLabel: false
+      editable: false
+      required: true
+      default: ikev2
+    - type: displayfield
+      caption: Ciphers
+    - type: list
+      name: ike
+      caption: ike
+      values:
+        aes128-sha256-modp3072: aes128-sha256-modp3072
+        aes128-sha1-modp2048: aes128-sha1-modp2048 (before 5.4.0)
+        aes128-sha1-modp1536 : aes128-sha1-modp1536 (For Cisco endpoint)
+      hideLabel: false
+      editable: yes
+      required: true
+      default: aes128-sha256-modp3072
+    - type: list
+      name: esp
+      caption: esp
+      values:
+        aes128-sha256: aes128-sha256
+        aes128-sha1: aes128-sha1 (For Cisco endpoint)
+      hideLabel: false
+      editable: yes
+      required: true
+      default: aes128-sha256
+    
+menu:
+  - caption: Restart Strongswan
+    loadingText: Restarting..
+    confirmText: Are you sure you wish to restart Strongswan?
+    action: restartStrongswan
+  - caption: Rebuild Config
+    loadingText: Reconfiguring..
+    confirmText: Are you sure you wish to reconfigure Strongswan?
+    action: install
+
+buttons:
+  - caption: Configure
+    loadingText: Updating..
+    settings: main
+    action: install
+    successText: /text/success_configured.md
+  - caption: Status
+    loadingText: Checking..
+    action: checkStrongswanStatus
+
+onBeforeInit: |
+  return {
+    "result": 0,
+    "settings": {
+      "fields": [{
+        "type": "string",
+        "name": "right",
+        "caption": "Peer public IP (right)",
+        "hideLabel": false,
+        "required": true,
+        "default": "127.0.0.1"
+      }, {
+        "type": "string",
+        "name": "rightSubnet",
+        "caption": "Peer sunbnet (rightsubnet)",
+        "hideLabel": false,
+        "required": true,
+        "default": "127.0.0.1/32"
+      }, {
+        "type": "string",
+        "name": "psk",
+        "caption": "PSK",
+        "required": true,
+        "hideLabel": false,
+        "default": com.hivext.api.utils.Random.getPswd(10)
+      }, {
+        "type": "list",
+        "name": "keyexchange",
+        "caption": "keyexchange",
+        "required": true,
+        "hideLabel": false,
+        "values": {
+          "ikev1": "ikev1",
+          "ikev2": "ikev2"
+        },
+        "default": "ikev2"
+      }, {
+        "type": "displayfield",
+        "caption": "Ciphers"
+      }, {
+        "type": "list",
+        "name": "ike",
+        "caption": "ike",
+        "required": true,
+        "hideLabel": false,
+        "values": {
+          "aes128-sha256-modp3072": "aes128-sha256-modp3072",
+          "aes128-sha1-modp2048": "aes128-sha1-modp2048 (before 5.4.0)",
+          "aes128-sha1-modp1536": "aes128-sha1-modp1536 (For Cisco endpoint)"
+        },
+        "default": "aes128-sha256-modp3072"
+      }, {
+        "type": "list",
+        "name": "esp",
+        "caption": "esp",
+        "required": true,
+        "hideLabel": false,
+        "values": {
+          "aes128-sha256": "aes128-sha256",
+          "aes128-sha1": "aes128-sha1 (For Cisco endpoint)"
+        },
+        "default": "aes128-sha256"
+      }]
+    }
+  };
+
+globals:
+  targetNodeId:  ${nodes.mygroup.first.id}
+  targetNodeExtIp: ${nodes.mygroup.first.extIPs[0]}
+  targetNodeIntIp: ${nodes.mygroup.first.intIP}/32
+  
+onAfterRedeployContainer:
+  install:
+    name: Install Action
+
+onInstall:
+  install:
+    name: Install Action
+
+onUninstall:
+  cmd [${globals.targetNodeId}]:
+    - systemctl disable strongswan;
+    - systemctl stop strongswan;
+    - yum remove strongswan strongswan-libipsec
+    - sh /root/strongswan_configure_firewall-custom.sh uninstall
+    - rm -f /root/strongswan_configure_firewall-custom.sh
+    - rm -f /root/strongswan_configure.sh;
+    - rm -f /etc/sudoers.d/strongswan;
+    - rm -f /etc/profile.d/strongswan.sh;
+    - rm -f /usr/local/bin/strongswan_monit.sh;
+    - rm -f /etc/cron.d/strongswan_monit;
+  sayYes: true
+  user: root
+
+actions:
+  install:
+    - cmd [${globals.targetNodeId}]:
+      - which rpm 2>/dev/null >/dev/null; if [ $? -gt 0 ]; then echo -e "Issue:\nrpm not found"; exit 0; fi;
+      - which systemctl 2>/dev/null >/dev/null; if [ $? -gt 0 ]; then echo -e "Issue:\nsystemctl not found"; exit 0; fi;
+      - yum install epel-release && yum install strongswan strongswan-libipsec; if [ $? -gt 0 ]; then echo -e "Issue:\nCan't install strongswan"; exit 0; fi;
+      - curl -fsSL '${baseUrl}/scripts/strongswan_configure_firewall-custom.sh' -o /root/strongswan_configure_firewall-custom.sh;
+      - sh /root/strongswan_configure_firewall-custom.sh;
+      - curl -fsSL '${baseUrl}/scripts/strongswan_configure.sh' -o /root/strongswan_configure.sh;
+      - sh /root/strongswan_configure.sh;
+      - curl -fsSL '${baseUrl}/scripts/strongswan_configure.sh' -o /root/strongswan_configure.sh;
+      - sh /root/strongswan_configure.sh "${baseUrl}" "${settings.keyexchange}" "${settings.right}" "${settings.rightSubnet}" "${settings.psk}" "${settings.ike}" "${settings.esp}"
+      - curl -fsSL '${baseUrl}/scripts/sudo_strongswan' -o /etc/sudoers.d/strongswan;
+      - curl -fsSL '${baseUrl}/scripts/profile_strongswan' -o /etc/profile.d/strongswan.sh;
+      - curl -fsSL '${baseUrl}/scripts/strongswan_monit.sh' -o /usr/local/bin/strongswan_monit.sh;
+      - curl -fsSL '${baseUrl}/scripts/strongswan_monit.cron' -o /etc/cron.d/strongswan_monit;
+      - chmod +x /usr/local/bin/strongswan.sh;
+      - systemctl enable strongswan;
+      - systemctl restart strongswan;
+      sayYes: true
+      user: root
+    - if (response.out.indexOf("Issue") !== -1):
+        message:  ${response.out}
+        script: |
+          return {result: 2309, message: message.replace(/\n/g, '  \n')}
+
+  addFirewallRules:
+
+
+  restartStrongswan:
+    - cmd [${globals.targetNodeId}]:
+        - systemctl restart strongswan 2>&1 > /dev/null;
+        - sleep 5;
+        - systemctl status strongswan 2>&1 > /dev/null;
+        - if [ $? -gt 0 ]; then systemctl status strongswan; fi;
+        - echo "";
+      user: root
+    - if (response.out.length > 0):
+        return:
+          type: error
+          message: '${response.out}'
+    - return:
+        type: success
+        message: 'Strongswan restart complete'
+
+  checkStrongswanStatus:
+    - cmd [${globals.targetNodeId}]:
+        - strongswan statusall | grep "Security Associations" -A 10;
+      user: root
+    - message: ${response.out}
+      script: |
+        return {result: 2308, message: message.replace(/\n/g, '  \n')}
+
+responses:
+  2308:
+    type: success
+  
+  2309:
+    type: error
+
+success: /texts/success.md
