@@ -4,7 +4,7 @@ baseUrl="$1"
 keyexchange="$2"
 right="$3"
 rightsubnet="$4"
-psk="$5"
+psk='$5'
 ike="$6"
 esp="$7"
 
@@ -108,7 +108,7 @@ if [ $? -eq 0 ]; then
     sed "s#$left.*$right.*##" -i $ipsecSecrets
 fi
 
-echo "$left $right : PSK \"$psk\"" >> $ipsecSecrets
+echo "$left $right : PSK $psk" >> $ipsecSecrets
 
 sed -i '/^$/d' $ipsecSecrets
 
