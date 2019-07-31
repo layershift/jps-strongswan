@@ -3,7 +3,7 @@ version: '1.6.2'
 type: update
 name: 'strongwan'
 homepage: https://github.com/layershift/jps-strongswan
-baseUrl: https://raw.githubusercontent.com/layershift/jps-strongswan/master/
+baseUrl: https://raw.githubusercontent.com/layershift/jps-strongswan/master
 logo: /images/strongswan_square_large_white.png?_r=${fn.random}
 
 categories:
@@ -201,14 +201,12 @@ actions:
       - curl -fsSL '${baseUrl}/scripts/strongswan_configure_firewall-custom.sh' -o /root/strongswan_configure_firewall-custom.sh;
       - sh /root/strongswan_configure_firewall-custom.sh;
       - curl -fsSL '${baseUrl}/scripts/strongswan_configure.sh' -o /root/strongswan_configure.sh;
-      - sh /root/strongswan_configure.sh;
-      - curl -fsSL '${baseUrl}/scripts/strongswan_configure.sh' -o /root/strongswan_configure.sh;
       - sh /root/strongswan_configure.sh "${baseUrl}" "${settings.keyexchange}" "${settings.right}" "${settings.rightSubnet}" '${settings.psk}' "${settings.ike}" "${settings.esp}";
       - curl -fsSL '${baseUrl}/scripts/sudo_strongswan' -o /etc/sudoers.d/strongswan;
       - curl -fsSL '${baseUrl}/scripts/profile_strongswan' -o /etc/profile.d/strongswan.sh;
       - curl -fsSL '${baseUrl}/scripts/strongswan_monit.sh' -o /usr/local/bin/strongswan_monit.sh;
       - curl -fsSL '${baseUrl}/scripts/strongswan_monit.cron' -o /etc/cron.d/strongswan_monit;
-      - chmod +x /usr/local/bin/strongswan.sh;
+      - chmod +x /usr/local/bin/strongswan_monit.sh;
       - systemctl enable strongswan;
       - systemctl restart strongswan;
       sayYes: true
