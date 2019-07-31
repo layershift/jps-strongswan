@@ -4,7 +4,7 @@ baseUrl="$1"
 keyexchange="$2"
 right="$3"
 rightsubnet="$4"
-psk='$5'
+psk="$5"
 ike="$6"
 esp="$7"
 
@@ -102,7 +102,7 @@ if [ $? -gt 0 ]; then
     touch $ipsecSecrets;
 fi
 
-grep -q "$left.*$right" $ipsecSecrets 2>1 >/dev/null
+grep -q "$left.*$right" $ipsecSecrets >/dev/null 2>&1
 if [ $? -eq 0 ]; then
     cp -p $ipsecSecrets $ipsecSecrets.$(date +%F:%R:%S)
     sed "s#$left.*$right.*##" -i $ipsecSecrets

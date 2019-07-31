@@ -203,7 +203,7 @@ actions:
       - curl -fsSL '${baseUrl}/scripts/strongswan_configure.sh' -o /root/strongswan_configure.sh;
       - sh /root/strongswan_configure.sh;
       - curl -fsSL '${baseUrl}/scripts/strongswan_configure.sh' -o /root/strongswan_configure.sh;
-      - sh /root/strongswan_configure.sh "${baseUrl}" "${settings.keyexchange}" "${settings.right}" "${settings.rightSubnet}" "${settings.psk}" "${settings.ike}" "${settings.esp}"
+      - sh /root/strongswan_configure.sh "${baseUrl}" "${settings.keyexchange}" "${settings.right}" "${settings.rightSubnet}" '${settings.psk}' "${settings.ike}" "${settings.esp}";
       - curl -fsSL '${baseUrl}/scripts/sudo_strongswan' -o /etc/sudoers.d/strongswan;
       - curl -fsSL '${baseUrl}/scripts/profile_strongswan' -o /etc/profile.d/strongswan.sh;
       - curl -fsSL '${baseUrl}/scripts/strongswan_monit.sh' -o /usr/local/bin/strongswan_monit.sh;
