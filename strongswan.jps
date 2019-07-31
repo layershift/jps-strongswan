@@ -2,6 +2,7 @@ _info : 'https://docs.cloudscripting.com/1.6.2/'
 version: '1.6.2'
 type: update
 name: 'strongwan'
+id: 'strongswan'
 homepage: https://github.com/layershift/jps-strongswan
 baseUrl: https://raw.githubusercontent.com/layershift/jps-strongswan/master
 logo: /images/strongswan_square_large_white.png?_r=${fn.random}
