@@ -1,16 +1,36 @@
 #!/bin/bash
 
-baseUrl="$1"
-keyexchange="$2"
-right="$3"
-rightsubnet="$4"
-psk="$5"
-ike="$6"
-esp="$7"
-
+action="$1"
+baseUrl="$2"
+keyexchange="$3"
+right="$4"
+rightsubnet="$5"
+psk="$6"
+ike="$7"
+esp="$8"
+hosts="$9"
 
 ipsecConf="/etc/strongswan/ipsec.conf"
 ipsecSecrets="/etc/strongswan/ipsec.secrets"
+hostsFile="/etc/hosts"
+
+function hostsFileCleanup {
+    grep "#strongswan mark" $hostsFile 2>1 >/dev/null
+    if [ $? -eq 0 ]; then
+        blockStart=$(grep -n "#strongswan mark" $hostsFile | awk -F ":" '{print $1}' | head -n 1)
+        blockEnd=$(grep -n "#strongswan mark" $hostsFile | awk -F ":" '{print $1}' | tail -n 1)
+        sed "$blockStart,$blockEnd d" -i $hostsFile
+    fi
+
+    sed -i '/^$/d' $hostsFile
+    echo "" >> $hostsFile
+}
+
+if [ "$action" == "uninstall" ]; then
+    hostsFileCleanup;
+
+    exit 0;
+fi
 
 left=$(hostname -I | awk '{print $2}')
 left=$(ip addr show | grep "inet " | grep -v 127.0.0.1 | grep -v 10.10 | awk '{print $2}' | sed 's#/.*##')
@@ -122,3 +142,12 @@ else
     echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
 fi
 sysctl -p
+
+
+#/etc/hosts
+
+hostsFileCleanup
+
+echo "#strongswan mark" >> $hostsFile 
+printf "$hosts\n" >> $hostsFile
+echo "#strongswan mark" >> $hostsFile 
