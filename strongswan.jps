@@ -2,7 +2,7 @@ _info : 'https://docs.cloudscripting.com/1.6.2/'
 version: 1.6.2
 build: 20190910
 type: update
-name: 'strongwan'
+name: 'strongswan'
 id: 'strongswan'
 homepage: https://github.com/layershift/jps-strongswan
 baseUrl: https://raw.githubusercontent.com/layershift/jps-strongswan/master
