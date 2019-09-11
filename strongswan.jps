@@ -256,8 +256,9 @@ actions:
 
   checkHostsFile:
     - cmd [${globals.targetNodeId}]:
-        - from=$(grep "#strongswan mark" /etc/hosts -m1 -n | awk -F ":" '{print $1}');
-        - sed -ne 5,999p /etc/hosts;
+        - grep -q "#strongswan mark" /etc/hosts 
+        - if [ $? -eq 0 ]; then from=$(grep "#strongswan mark" /etc/hosts -m1 -n | awk -F ":" '{print $1}'); else from=1; fi;
+        - sed -ne $from,999p /etc/hosts;
       user: root
     - message: ${response.out}
       script: |
