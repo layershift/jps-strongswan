@@ -62,3 +62,7 @@ ipsec up myVPN
 ### Additional checks
 
 There is a cron task installed that will check the status of strongswan service and will restart it if it's stopped.
+
+### Known issues
+
+StrongSwan uses a tap interface. If you don't have the ipsec0 interface ask your hoster to enable tun/tap.
