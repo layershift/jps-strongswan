@@ -84,10 +84,6 @@ menu:
   - caption: Check hosts file
     loadingText: Checking..
     action: checkHostsFile
-  - caption: Restart Strongswan
-    loadingText: Restarting..
-    confirmText: Are you sure you wish to restart Strongswan?
-    action: restartStrongswan
   - caption: Configure
     loadingText: Updating..
     settings: main
@@ -100,9 +96,27 @@ menu:
     action: install
 
 buttons:
-  - caption: Status
+  - caption: SA Status
     loadingText: Checking..
     action: checkStrongswanStatus
+  - menu:
+    - caption: Strongswan Status
+      loadingText: Checking..
+      confirmText: Are you sure you wish to check Strongswan service status?
+      action: statusStrongswan
+    - caption: Start Strongswan
+      loadingText: Starting..
+      confirmText: Are you sure you wish to start Strongswan?
+      action: restartStrongswan
+    - caption: Restart Strongswan
+      loadingText: Restarting..
+      confirmText: Are you sure you wish to restart Strongswan?
+      action: restartStrongswan
+    - caption: Stop Strongswan
+      loadingText: Stopping..
+      confirmText: Are you sure you wish to stop Strongswan?
+      action: stopStrongswan
+
 
 onBeforeInit: |
   return {
@@ -221,6 +235,7 @@ actions:
       - curl -fsSL '${baseUrl}/scripts/strongswan_monit.sh' -o /usr/local/bin/strongswan_monit.sh;
       - curl -fsSL '${baseUrl}/scripts/strongswan_monit.cron' -o /etc/cron.d/strongswan_monit;
       - chmod +x /usr/local/bin/strongswan_monit.sh;
+      - chown -R jelastic /etc/strongswan
       - systemctl enable strongswan;
       - systemctl restart strongswan;
       sayYes: true
@@ -232,10 +247,11 @@ actions:
 
   restartStrongswan:
     - cmd [${globals.targetNodeId}]:
-        - systemctl restart strongswan 2>&1 > /dev/null;
+        - systemctl enable strongswan -q 2>&1 1>/dev/null;
+        - systemctl restart strongswan 2>&1 1>/dev/null;
         - sleep 5;
-        - systemctl status strongswan 2>&1 > /dev/null;
-        - if [ $? -gt 0 ]; then systemctl status strongswan; fi;
+        - systemctl status strongswan 2>&1 1>/dev/null;
+        - if [ $? -gt 0 ]; then systemctl status strongswan --lines=0; fi;
         - echo "";
       user: root
     - if (response.out.length > 0):
@@ -246,9 +262,37 @@ actions:
         type: success
         message: 'Strongswan restart complete'
 
+  stopStrongswan:
+    - cmd [${globals.targetNodeId}]:
+        - systemctl disable strongswan -q 2>&1 1>/dev/null;
+        - systemctl stop strongswan 2>&1 1>/dev/null;
+        - sleep 5;
+        - systemctl status strongswan 2>&1 1>/dev/null;
+        - if [ $? -eq 0 ]; then systemctl status strongswan --lines=0; fi;
+        - echo "";
+      user: root
+    - if (response.out.length > 0):
+        return:
+          type: error
+          message: '${response.out}'
+    - return:
+        type: success
+        message: 'Strongswan stop complete'
+
+  statusStrongswan:
+    - cmd [${globals.targetNodeId}]:
+        - systemctl status strongswan --lines=0; 
+        - echo "";
+      user: root
+    - return:
+        type: info
+        message: '${response.out}'
+
   checkStrongswanStatus:
     - cmd [${globals.targetNodeId}]:
-        - strongswan statusall | grep "Security Associations" -A 10;
+        - strongswan statusall 2>&1 1>/dev/null
+        - if [ $? -eq 0 ]; then strongswan statusall | grep "Security Associations" -A 10; else echo "Strongswan offline!"; fi;
+        - echo ""
       user: root
     - message: ${response.out}
       script: |
