@@ -122,10 +122,10 @@ if [ $? -gt 0 ]; then
     touch $ipsecSecrets;
 fi
 
-grep -q "$left.*$right" $ipsecSecrets >/dev/null 2>&1
+grep -q "$right" $ipsecSecrets >/dev/null 2>&1
 if [ $? -eq 0 ]; then
     cp -p $ipsecSecrets $ipsecSecrets.$(date +%F:%R:%S)
-    sed "s#$left.*$right.*##" -i $ipsecSecrets
+    sed "s#.*$right.*##" -i $ipsecSecrets
 fi
 
 echo "$left $right : PSK $psk" >> $ipsecSecrets
