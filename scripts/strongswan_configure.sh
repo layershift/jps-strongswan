@@ -33,7 +33,7 @@ if [ "$action" == "uninstall" ]; then
 fi
 
 left=$(hostname -I | awk '{print $2}')
-left=$(ip addr show | grep "inet " | grep -v 127.0.0.1 | grep -v 10.10 | awk '{print $2}' | sed 's#/.*##')
+left=$(ip addr show | grep "venet" | grep "inet " | grep -v 127.0.0.1 | grep -v 10.10 | awk '{print $2}' | sed 's#/.*##')
 leftSubnet=$(hostname -I | awk '{print $3}')"/32"
 leftSubnet=$(ip addr show | grep "inet " | grep -v 127.0.0.1 | grep 10.10 | awk '{print $2}' | sed 's#/.*##')"/32"
 
